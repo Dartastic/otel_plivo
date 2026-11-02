@@ -1,15 +1,16 @@
-// Licensed under the Dartastic Pro Software License Agreement.
+// Licensed under the Apache License, Version 2.0
 // Copyright 2025-2026 Mindful Software LLC d/b/a Dartastic.io, All rights reserved.
 
-import 'package:dartastic_opentelemetry/dartastic_opentelemetry.dart';
+import 'package:dartastic_opentelemetry_api/dartastic_opentelemetry_api.dart';
 
 import 'otel_plivo_suppression.dart';
 
 const _tracerName = 'dartastic_otel_libs_plivo';
 
-Tracer _tracer() => OTel.tracerProvider().getTracer(_tracerName);
+APITracer _tracer() => OTelAPI.tracerProvider().getTracer(_tracerName);
 
 class PlivoResult {
+  /// Creates a result.
   const PlivoResult({
     this.product,
     this.authId,
@@ -97,8 +98,13 @@ class PlivoResult {
   final int? statusCode;
 }
 
+/// What a traced call returned: the value for the caller plus fields
+/// recorded on the span.
 class PlivoCallResult<T> {
+  /// Creates a call result.
   const PlivoCallResult({required this.value, this.result});
+
+  /// The value returned to the caller.
   final T value;
   final PlivoResult? result;
 }
@@ -131,7 +137,7 @@ Future<T> tracedPlivo<T>({
   final span = _tracer().startSpan(
     'plivo $operation',
     kind: SpanKind.client,
-    attributes: OTel.attributesFromMap(m),
+    attributes: OTelAPI.attributesFromMap(m),
   );
   try {
     final r = await invoke();
@@ -139,37 +145,37 @@ Future<T> tracedPlivo<T>({
       final res = r.result!;
       final extras = <Attribute<Object>>[];
       if (res.product != null) {
-        extras.add(OTel.attributeString('plivo.product', res.product!));
+        extras.add(OTelAPI.attributeString('plivo.product', res.product!));
       }
       if (res.authId != null) {
-        extras.add(OTel.attributeString('plivo.auth_id', res.authId!));
+        extras.add(OTelAPI.attributeString('plivo.auth_id', res.authId!));
       }
       if (res.from != null) {
-        extras.add(OTel.attributeString('plivo.from', res.from!));
+        extras.add(OTelAPI.attributeString('plivo.from', res.from!));
       }
       if (res.to != null) {
-        extras.add(OTel.attributeString('plivo.to', res.to!));
+        extras.add(OTelAPI.attributeString('plivo.to', res.to!));
       }
       if (res.countryCode != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'plivo.country_code',
           res.countryCode!,
         ));
       }
       if (res.messageUuid != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'plivo.message.uuid',
           res.messageUuid!,
         ));
       }
       if (res.messageType != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'plivo.message.type',
           res.messageType!,
         ));
       }
       if (res.messageStatus != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'plivo.message.status',
           res.messageStatus!,
         ));
@@ -183,31 +189,31 @@ Future<T> tracedPlivo<T>({
         }
       }
       if (res.totalRate != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'plivo.message.total_rate_micros',
           res.totalRate!,
         ));
       }
       if (res.totalCharge != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'plivo.message.total_charge_micros',
           res.totalCharge!,
         ));
       }
       if (res.units != null) {
-        extras.add(OTel.attributeInt('plivo.message.units', res.units!));
+        extras.add(OTelAPI.attributeInt('plivo.message.units', res.units!));
       }
       if (res.callUuid != null) {
-        extras.add(OTel.attributeString('plivo.call.uuid', res.callUuid!));
+        extras.add(OTelAPI.attributeString('plivo.call.uuid', res.callUuid!));
       }
       if (res.callDirection != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'plivo.call.direction',
           res.callDirection!,
         ));
       }
       if (res.callStatus != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'plivo.call.status',
           res.callStatus!,
         ));
@@ -216,22 +222,22 @@ Future<T> tracedPlivo<T>({
         }
       }
       if (res.callDurationSec != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'plivo.call.duration_sec',
           res.callDurationSec!,
         ));
       }
       if (res.callBillDurationSec != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'plivo.call.bill_duration_sec',
           res.callBillDurationSec!,
         ));
       }
       if (res.verifyId != null) {
-        extras.add(OTel.attributeString('plivo.verify.id', res.verifyId!));
+        extras.add(OTelAPI.attributeString('plivo.verify.id', res.verifyId!));
       }
       if (res.verifyStatus != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'plivo.verify.status',
           res.verifyStatus!,
         ));
@@ -243,35 +249,35 @@ Future<T> tracedPlivo<T>({
         }
       }
       if (res.verifyChannel != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'plivo.verify.channel',
           res.verifyChannel!,
         ));
       }
       if (res.whatsappTemplateName != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'plivo.whatsapp.template.name',
           res.whatsappTemplateName!,
         ));
       }
       if (res.whatsappTemplateNamespace != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'plivo.whatsapp.template.namespace',
           res.whatsappTemplateNamespace!,
         ));
       }
       if (res.errorCode != null) {
-        extras.add(OTel.attributeString('plivo.error.code', res.errorCode!));
+        extras.add(OTelAPI.attributeString('plivo.error.code', res.errorCode!));
         span.setStatus(SpanStatusCode.Error, 'Plivo ${res.errorCode}');
       }
       if (res.errorMessage != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'plivo.error.message',
           res.errorMessage!,
         ));
       }
       if (res.statusCode != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'http.response.status_code',
           res.statusCode!,
         ));
@@ -279,13 +285,13 @@ Future<T> tracedPlivo<T>({
           span.setStatus(SpanStatusCode.Error, 'Plivo HTTP ${res.statusCode}');
         }
       }
-      if (extras.isNotEmpty) span.addAttributes(OTel.attributes(extras));
+      if (extras.isNotEmpty) span.addAttributes(OTelAPI.attributes(extras));
     }
     return r.value;
   } catch (e, st) {
-    span.addAttributes(OTel.attributes([
-      OTel.attributeString(
-        ErrorResource.errorType.key,
+    span.addAttributes(OTelAPI.attributes([
+      OTelAPI.attributeString(
+        ErrorAttributes.errorType.key,
         e.runtimeType.toString(),
       ),
     ]));
